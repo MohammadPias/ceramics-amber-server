@@ -83,19 +83,17 @@ async function run() {
         // Delete user
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
             const query = { _id: ObjectId(id) };
             const result = await userCollection.deleteOne(query);
             res.json(result)
         });
 
-        //--------------product---------------//
+        //--------------products---------------//
 
         // add products to data base
         app.post('/products', async (req, res) => {
             const product = req.body;
             const result = await productCollection.insertOne(product);
-            console.log(product, result)
             res.json(result);
         });
         // get all products
@@ -103,7 +101,42 @@ async function run() {
             const cursor = productCollection.find({});
             const result = await cursor.toArray();
             res.send(result)
-        })
+        });
+        // get products by id
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id, query)
+            const query = { _id: ObjectId(id) };
+            // const result = await productCollection.findOne(query);
+            res.json(id)
+        });
+
+        app.delete('/products', async (req, res) => {
+            const id = req.body;
+            const query = { _id: ObjectId(id.id) }
+
+            const result = await productCollection.deleteOne(query)
+            res.json(result)
+        });
+        // get product by local storage keys
+        app.post('/products/keys', async (req, res) => {
+            const keys = req.body;
+            console.log(keys)
+
+            const objArray = [];
+            if (keys.length) {
+                for (const key of keys) {
+                    objArray.push(ObjectId(key))
+                }
+            }
+            console.log(objArray)
+
+            const query = { _id: { $in: objArray } };
+            const result = await productCollection.find(query).toArray();
+            console.log(result)
+            res.json(result)
+
+        });
     }
     finally {
         // await client.close();
