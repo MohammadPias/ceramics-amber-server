@@ -20,6 +20,7 @@ async function run() {
         const database = client.db('ceramics-amber');
         const userCollection = database.collection('users');
         const productCollection = database.collection('products');
+        const orderCollection = database.collection('orders')
 
         // add user to database
         app.post('/users', async (req, res) => {
@@ -105,7 +106,6 @@ async function run() {
         // get products by id
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id, query)
             const query = { _id: ObjectId(id) };
             // const result = await productCollection.findOne(query);
             res.json(id)
@@ -137,6 +137,49 @@ async function run() {
             res.json(result)
 
         });
+
+        // Order management=======================
+        // add orders to database
+        app.post('/orders', async (req, res) => {
+            const orders = req.body;
+            const result = await orderCollection.insertOne(orders);
+            res.json(result)
+        });
+
+        // get all orders
+        app.get('/orders', async (req, res) => {
+            const cursor = orderCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result)
+        });
+        // get orders by email
+        app.post('/myOrders', async (req, res) => {
+            const data = req.body;
+            const query = { email: data.email }
+            const result = await orderCollection.find(query).toArray();
+            res.json(result)
+        });
+        // delete order
+        app.delete('/myOrders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
+
+            console.log(id)
+            res.json(result)
+        })
+        // update order Status
+        app.put('/myOrders/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const option = { upsert: true };
+            const updateDoc = {
+                $set: { status: 'updated' }
+            }
+            const result = await orderCollection.updateOne(filter, updateDoc, option);
+            res.json(result)
+        })
+
     }
     finally {
         // await client.close();
