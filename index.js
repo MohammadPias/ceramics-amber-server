@@ -129,11 +129,9 @@ async function run() {
                     objArray.push(ObjectId(key))
                 }
             }
-            console.log(objArray)
 
             const query = { _id: { $in: objArray } };
             const result = await productCollection.find(query).toArray();
-            console.log(result)
             res.json(result)
 
         });
