@@ -154,7 +154,7 @@ async function run() {
         app.get('/myorders/:id', async(req, res)=>{
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
-            const resul = await orderCollection.findOne(query);
+            const result = await orderCollection.findOne(query);
             res.json(result)
         })
         // get orders by email
