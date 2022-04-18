@@ -171,7 +171,6 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
 
-            console.log(id)
             res.json(result)
         })
         // update order Status
@@ -203,6 +202,7 @@ async function run() {
             const paymentInfo = req.body;
             const amount = paymentInfo?.price * 100;
           
+            console.log(amount)
            if(amount){
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
