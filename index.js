@@ -202,7 +202,7 @@ async function run() {
             const paymentInfo = req.body;
             const amount = paymentInfo?.price * 100;
           
-            console.log(amount)
+            console.log(amount, paymentInfo)
            if(amount){
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
