@@ -198,24 +198,16 @@ async function run() {
         });
 
         // stripe payment method
-        app.post("/create-payment-intent", async (req, res) => {
+        app.post('/create-payment-intent', async (req, res) => {
             const paymentInfo = req.body;
-            const amount = paymentInfo?.price * 100;
-          
-            console.log(amount, paymentInfo)
-           if(amount){
+            const amount = paymentInfo.price * 100;
             const paymentIntent = await stripe.paymentIntents.create({
+                currency: 'usd',
                 amount: amount,
-                currency: "usd",
-                payment_method_types: [
-                    "card"
-                  ],
-              });
-              res.send({
-                clientSecret: paymentIntent?.client_secret,
-              });
-           }
-          });
+                payment_method_types: ['card']
+            });
+            res.json({ clientSecret: paymentIntent.client_secret })
+        })
 
     }
     finally {
