@@ -201,7 +201,6 @@ async function run() {
         // stripe payment method
         app.post("/create-payment-intent", async (req, res) => {
             const paymentInfo = req.body;
-            // console.log(Math.round(paymentInfo?.price))
             const amount = paymentInfo?.price * 100;
           
            if(amount){
