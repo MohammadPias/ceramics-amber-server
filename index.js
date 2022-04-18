@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
-require('dotenv').config()
+require('dotenv').config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -177,13 +178,45 @@ async function run() {
         app.put('/myOrders/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
-            const option = { upsert: true };
-            const updateDoc = {
-                $set: { status: 'updated' }
+            const fromBody = req.body;
+            let result;
+
+            if(fromBody?.status === "update"){
+                const updateDoc = {
+                    $set: { status: 'updated' }
+                };
+                result= await orderCollection.updateOne(filter, updateDoc);
             }
-            const result = await orderCollection.updateOne(filter, updateDoc, option);
+            else{
+                const updateDoc = {
+                    $set: { paymentStatus: fromBody }
+                };
+                result= await orderCollection.updateOne(filter, updateDoc);
+            }
+            
+            
             res.json(result)
-        })
+        });
+
+        // stripe payment method
+        app.post("/create-payment-intent", async (req, res) => {
+            const paymentInfo = req.body;
+            // console.log(Math.round(paymentInfo?.price))
+            const amount = paymentInfo?.price * 100;
+          
+           if(amount){
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: "usd",
+                automatic_payment_methods: {
+                  enabled: true,
+                },
+              });
+              res.send({
+                clientSecret: paymentIntent?.client_secret,
+              });
+           }
+          });
 
     }
     finally {
