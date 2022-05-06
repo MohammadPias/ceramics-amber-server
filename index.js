@@ -108,8 +108,8 @@ async function run() {
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            // const result = await productCollection.findOne(query);
-            res.json(id)
+            const result = await productCollection.findOne(query);
+            res.json(result)
         });
 
         app.delete('/products', async (req, res) => {
@@ -119,6 +119,18 @@ async function run() {
             const result = await productCollection.deleteOne(query)
             res.json(result)
         });
+
+        // updated product
+        app.put('/products/:id', async (req, res)=>{
+            const product= req.body;
+            const id = req.params.id;
+            const filter= {_id: ObjectId(id)};
+            const updateDoc= {product};
+            const result= await productCollection.replaceOne(filter, product);
+            console.log(result)
+            res.json(result)
+        })
+
         // get product by local storage keys
         app.post('/products/keys', async (req, res) => {
             const keys = req.body;
