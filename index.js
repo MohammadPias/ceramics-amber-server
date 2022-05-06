@@ -173,6 +173,7 @@ async function run() {
 
             res.json(result)
         })
+
         // update order Status
         app.put('/myOrders/:id', async (req, res) => {
             const id = req.params.id;
@@ -180,7 +181,7 @@ async function run() {
             const fromBody = req.body;
             let result;
 
-            if(fromBody?.status === "update"){
+            if(fromBody?.status){
                 const updateDoc = {
                     $set: { status: 'updated' }
                 };
