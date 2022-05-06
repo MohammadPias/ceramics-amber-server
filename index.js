@@ -181,7 +181,7 @@ async function run() {
             const formBody = req.body;
             let result;
 
-            if(!formBody){
+            if(!formBody?.created){
                 const updateDoc = {
                     $set: { status: 'updated' }
                 };
