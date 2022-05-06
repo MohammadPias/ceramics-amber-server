@@ -178,10 +178,10 @@ async function run() {
         app.put('/myOrders/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
-            const fromBody = req.body;
+            const formBody = req.body;
             let result;
 
-            if(fromBody?.status){
+            if(!formBody?.status){
                 const updateDoc = {
                     $set: { status: 'updated' }
                 };
@@ -189,7 +189,7 @@ async function run() {
             }
             else{
                 const updateDoc = {
-                    $set: { paymentStatus: fromBody }
+                    $set: { paymentStatus: formBody }
                 };
                 result= await orderCollection.updateOne(filter, updateDoc);
             }
